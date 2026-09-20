@@ -28,4 +28,4 @@ Responsive full-stack attendance tracker for engineering students built with Nod
 - The dashboard includes a bunk meter that calculates safe skips or required consecutive attendance.
 - The current design is ready for extension to multi-student deployments.
 
-## MR intelligent ,if you want any other features you may add them 
+## Hello,MR intelligent ,if you want any other features you may add them 
