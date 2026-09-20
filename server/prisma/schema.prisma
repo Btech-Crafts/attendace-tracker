@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int             @id @default(autoincrement())
+  username         String          @unique
+  passwordHash     String
+  targetPercentage Float            @default(75)
+  timetableEntries Timetable[]
+  attendanceLogs   AttendanceLog[]
+  holidaysCreated  Holiday[]        @relation("CreatedBy")
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+model Timetable {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  dayOfWeek    Int
+  periodNumber Int
+  subjectName  String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dayOfWeek, periodNumber])
+  @@index([userId, dayOfWeek])
+}
+
+model Holiday {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @unique
+  holidayName     String
+  isOfficial      Boolean  @default(false)
+  createdByUserId Int?
+  createdBy       User?    @relation("CreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+
+  @@index([date])
+}
+
+model AttendanceLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  date         DateTime
+  periodNumber Int
+  subjectName  String
+  attended     Boolean  @default(false)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, periodNumber])
+  @@index([userId, date])
+  @@index([userId, subjectName])
+}
